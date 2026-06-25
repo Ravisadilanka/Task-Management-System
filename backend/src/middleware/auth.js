@@ -13,9 +13,8 @@ const protect = async (req, res, next) => {
 
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
 
-        console.log("Decoded:", decoded);
+        req.user = await User.findById(decoded.id).select("-password");
 
-        req.user = await User.findById(decoded.userId).select("-password");
         next()
     } catch (error) {
         return res.status(401).json({ message: "Unauthorized" })
