@@ -14,10 +14,10 @@ const DashboardLayout = () => {
         <Navbar />
 
         <main className="flex-1 p-6">
-  <h1 className="text-3xl font-bold">
-    Dashboard Content
-  </h1>
-</main>
+
+          <Outlet />
+
+        </main>
 
       </div>
 
