@@ -6,6 +6,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import Dashboard from "@/pages/Dashboard";
 import Register from "@/pages/Register";
 import DashboardLayout from "@/layouts/DashboardLayout";
+import Tasks from "@/pages/Tasks";
 
 const AppRoutes = () => {
   return (
@@ -25,7 +26,7 @@ const AppRoutes = () => {
           }
         >
           <Route index element={<Dashboard />} />
-          {/* <Route path="tasks" element={<Tasks />} /> */}
+          <Route path="tasks" element={<Tasks />} />
         </Route>
       </Routes>
     </BrowserRouter>
