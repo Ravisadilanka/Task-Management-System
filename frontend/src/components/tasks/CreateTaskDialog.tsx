@@ -1,0 +1,283 @@
+import { useEffect, useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+
+import api from "@/services/api";
+import { useAuth } from "@/hooks/useAuth";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import {
+  createTaskSchema,
+  type CreateTaskForm,
+} from "@/validations/task";
+import type { User } from "@/types/auth";
+
+
+interface Props {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onCreated: () => void;
+}
+
+const CreateTaskDialog = ({
+  open,
+  onOpenChange,
+  onCreated,
+}: Props) => {
+  const { user } = useAuth();
+
+  const [users, setUsers] =
+    useState<User[]>([]);
+
+  const {
+    register,
+    control,
+    handleSubmit,
+    reset,
+    formState: {
+      errors,
+      isSubmitting,
+    },
+  } = useForm<CreateTaskForm>({
+    resolver: zodResolver(createTaskSchema),
+
+    defaultValues: {
+      priority: "Medium",
+    },
+  });
+
+  useEffect(() => {
+    if (
+      open &&
+      user?.role === "admin"
+    ) {
+      loadUsers();
+    }
+  }, [open]);
+
+  const loadUsers = async () => {
+    try {
+      const response =
+        await api.get<User[]>("/users");
+
+      setUsers(response.data);
+    } catch {
+      toast.error(
+        "Failed to load users"
+      );
+    }
+  };
+
+  const onSubmit = async (
+    data: CreateTaskForm
+  ) => {
+    try {
+      await api.post("/tasks", data);
+
+      toast.success(
+        "Task created successfully"
+      );
+
+      reset();
+
+      onCreated();
+
+      onOpenChange(false);
+    } catch (error: any) {
+      toast.error(
+        error.response?.data?.message ??
+          "Failed to create task"
+      );
+    }
+  };
+
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={onOpenChange}
+    >
+      <DialogContent className="sm:max-w-xl bg-white">
+
+        <DialogHeader>
+
+          <DialogTitle>
+            Create Task
+          </DialogTitle>
+
+        </DialogHeader>
+
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-5"
+        >
+
+          <div>
+
+            <Input
+              placeholder="Task title"
+              {...register("title")}
+            />
+
+            {errors.title && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.title.message}
+              </p>
+            )}
+
+          </div>
+
+          <div>
+
+            <Textarea
+              rows={5}
+              placeholder="Description"
+              {...register(
+                "description"
+              )}
+            />
+
+          </div>
+
+          <Controller
+            control={control}
+            name="priority"
+            render={({
+              field,
+            }) => (
+              <Select
+                value={field.value}
+                onValueChange={
+                  field.onChange
+                }
+              >
+                <SelectTrigger>
+
+                  <SelectValue placeholder="Priority" />
+
+                </SelectTrigger>
+
+                <SelectContent>
+
+                  <SelectItem value="Low">
+                    Low
+                  </SelectItem>
+
+                  <SelectItem value="Medium">
+                    Medium
+                  </SelectItem>
+
+                  <SelectItem value="High">
+                    High
+                  </SelectItem>
+
+                </SelectContent>
+
+              </Select>
+            )}
+          />
+
+          {user?.role ===
+            "admin" && (
+            <Controller
+              control={control}
+              name="assignedTo"
+              render={({
+                field,
+              }) => (
+                <Select
+                  value={field.value}
+                  onValueChange={
+                    field.onChange
+                  }
+                >
+                  <SelectTrigger>
+
+                    <SelectValue placeholder="Assign user" />
+
+                  </SelectTrigger>
+
+                  <SelectContent>
+
+                    {users.map(
+                      (user) => (
+                        <SelectItem
+                          key={
+                            user._id
+                          }
+                          value={
+                            user._id
+                          }
+                        >
+                          {
+                            user.name
+                          }
+                        </SelectItem>
+                      )
+                    )}
+
+                  </SelectContent>
+
+                </Select>
+              )}
+            />
+          )}
+
+          <Input
+            type="date"
+            {...register(
+              "dueDate"
+            )}
+          />
+
+          <div className="flex justify-end gap-3">
+
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() =>
+                onOpenChange(false)
+              }
+            >
+              Cancel
+            </Button>
+
+            <Button
+              type="submit"
+              disabled={
+                isSubmitting
+              }
+            >
+              {isSubmitting
+                ? "Creating..."
+                : "Create Task"}
+            </Button>
+
+          </div>
+
+        </form>
+
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default CreateTaskDialog;

@@ -4,16 +4,25 @@ export const createTask = async (req, res) => {
     try {
         const { title, description, priority, dueDate, assignedTo } = req.body
 
+        const assignedUser =
+            req.user.role === "admin"
+                ? assignedTo
+                : req.user._id;
+
         const task = await Task.create({
             title,
             description,
             priority,
             dueDate,
-            assignedTo,
-            createdBy: req.user._id
-        })
+            assignedTo: assignedUser,
+            createdBy: req.user._id,
+        });
 
-        res.status(201).json(task)
+        const createdTask = await Task.findById(task._id)
+            .populate("createdBy", "name email")
+            .populate("assignedTo", "name email");
+
+        res.status(201).json(createdTask);
     } catch (error) {
         res.status(500).json({ message: 'Error creating task', error: error.message })
     }
@@ -123,7 +132,7 @@ export const getTasks = async (req, res) => {
 
 export const updateTask = async (req, res) => {
     try {
-        const { title, description, priority, status, dueDate, assignegTo } = req.body
+        const { title, description, priority, status, dueDate, assignedTo } = req.body
 
         const task = await Task.findById(req.params.id)
 
@@ -140,6 +149,7 @@ export const updateTask = async (req, res) => {
         task.priority = priority ?? task.priority;
         task.status = status ?? task.status;
         task.dueDate = dueDate ?? task.dueDate;
+        task.assignedTo = assignedTo ?? task.assignedTo;
 
         await task.save()
 
