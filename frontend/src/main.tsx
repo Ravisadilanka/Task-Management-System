@@ -1,12 +1,16 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import "./index.css";
+import App from "./App.tsx";
 import { Toaster } from "sonner";
+import { AuthProvider } from "./contexts/AuthContext.tsx";
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-    <Toaster richColors position="top-right" />
-  </StrictMode>,
-)
+createRoot(document.getElementById("root")!).render(
+  <AuthProvider>
+    <StrictMode>
+      <App />
+      <Toaster richColors position="top-right" />
+    </StrictMode>
+    ,
+  </AuthProvider>,
+);

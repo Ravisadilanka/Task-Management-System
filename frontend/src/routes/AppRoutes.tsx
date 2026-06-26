@@ -1,24 +1,36 @@
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-} from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import AuthLayout from "@/components/layout/AuthLayout";
 import Login from "@/pages/Login";
+import ProtectedRoute from "./ProtectedRoute";
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import Dashboard from "@/pages/Dashboard";
+import Register from "@/pages/Register";
 
 const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
-
         <Route element={<AuthLayout />}>
-          <Route
-            path="/login"
-            element={<Login />}
-          />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Route>
 
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Dashboard />} />
+
+          {/* <Route
+          path="tasks"
+          element={<Tasks />}
+        /> */}
+        </Route>
       </Routes>
     </BrowserRouter>
   );

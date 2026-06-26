@@ -4,9 +4,10 @@ export interface LoginRequest {
 }
 
 export interface User {
-    id: string;
+    _id: string;
     name: string;
     role: "admin" | "user";
+    email: string;
 }
 
 export interface loginResponse {

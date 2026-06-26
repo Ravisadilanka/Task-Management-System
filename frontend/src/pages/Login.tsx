@@ -10,19 +10,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import type { loginResponse } from "@/types/auth";
+import { useAuth } from "@/hooks/useAuth";
 
 const loginSchema = z.object({
   email: z.email("Please enter a valid email"),
-  password: z
-    .string()
-    .min(6, "Password must be at least 6 characters"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
 
-
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const {
     register,
@@ -34,20 +33,11 @@ const Login = () => {
 
   const onSubmit = async (data: LoginForm) => {
     try {
-      const response = await api.post<loginResponse>(
-        "/auth/login",
-        data
-      );
+      const response = await api.post<loginResponse>("/auth/login", data);
 
-      localStorage.setItem(
-        "accessToken",
-        response.data.accessToken
-      );
+      login(response.data.accessToken, response.data.user);
 
-      localStorage.setItem(
-        "user",
-        JSON.stringify(response.data.user)
-      );
+      toast.success("Welcome back!");
 
       navigate("/");
     } catch (error) {
@@ -60,23 +50,16 @@ const Login = () => {
     <Card className="w-full max-w-md rounded-2xl border-0 shadow-xl">
       <CardContent className="p-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold">
-            Welcome Back
-          </h1>
+          <h1 className="text-3xl font-bold">Welcome Back</h1>
 
           <p className="mt-2 text-sm text-slate-500">
             Sign in to continue to Task Manager
           </p>
         </div>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-5"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="email">
-              Email
-            </Label>
+            <Label htmlFor="email">Email</Label>
 
             <Input
               id="email"
@@ -86,16 +69,12 @@ const Login = () => {
             />
 
             {errors.email && (
-              <p className="text-sm text-red-500">
-                {errors.email.message}
-              </p>
+              <p className="text-sm text-red-500">{errors.email.message}</p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">
-              Password
-            </Label>
+            <Label htmlFor="password">Password</Label>
 
             <Input
               id="password"
@@ -105,9 +84,7 @@ const Login = () => {
             />
 
             {errors.password && (
-              <p className="text-sm text-red-500">
-                {errors.password.message}
-              </p>
+              <p className="text-sm text-red-500">{errors.password.message}</p>
             )}
           </div>
 
@@ -116,9 +93,7 @@ const Login = () => {
             className="h-11 w-full rounded-xl bg-blue-600 hover:bg-blue-700 text-white"
             disabled={isSubmitting}
           >
-            {isSubmitting
-              ? "Signing In..."
-              : "Sign In"}
+            {isSubmitting ? "Signing In..." : "Sign In"}
           </Button>
         </form>
       </CardContent>
