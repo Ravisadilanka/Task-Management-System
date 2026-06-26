@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import { generateAccessToken, generateRefreshToken } from "../utils/tokens.js"
 
 //Register User
@@ -33,30 +34,57 @@ export const registerUser = async (req, res) => {
 }
 
 //Refresh Token
+
 export const refresh = async (req, res) => {
     try {
         const refreshToken = req.cookies.refreshToken;
 
         if (!refreshToken) {
-            return res.status(401).json({ message: "Unauthorized" })
+            return res.status(401).json({
+                message: "Unauthorized",
+            });
         }
 
-        const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+        const decoded = jwt.verify(
+            refreshToken,
+            process.env.REFRESH_TOKEN_SECRET
+        );
 
-        const user = await User.findById(decoded.userId)
 
-        if (!user || user.refreshToken !== refreshToken) {
-            return res.status(403).json({ message: "Forbidden" })
+        const user = await User.findById(decoded.id);
+
+
+        if (!user) {
+            return res.status(403).json({
+                message: "User not found",
+            });
+        }
+        
+        if (user.refreshToken !== refreshToken) {
+            return res.status(403).json({
+                message: "Refresh token does not match",
+            });
         }
 
-        const accessToken = generateAccessToken(user._id)
+        const accessToken = generateAccessToken(user._id);
 
-        res.json({ accessToken })
+        return res.json({
+            accessToken,
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+            },
+        });
     } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message })
-    }
-}
+        console.error(error);
 
+        return res.status(500).json({
+            message: error.message,
+        });
+    }
+};
 //Login User
 export const login = async (req, res) => {
     try {

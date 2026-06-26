@@ -33,55 +33,24 @@ export const AuthProvider = ({
   }, []);
 
   const checkAuth = async () => {
-    const token =
-      localStorage.getItem("accessToken");
+  try {
+    const response = await api.post("/auth/refresh");
 
-    if (token) {
-      api.defaults.headers.common.Authorization =
-        `Bearer ${token}`;
+    login(
+      response.data.accessToken,
+      response.data.user
+    );
+  } catch {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
 
-      const savedUser =
-        localStorage.getItem("user");
+    delete api.defaults.headers.common.Authorization;
 
-      if (savedUser) {
-        setUser(JSON.parse(savedUser));
-      }
-
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const response = await api.post(
-        "/auth/refresh"
-      );
-
-      const newToken =
-        response.data.accessToken;
-
-      localStorage.setItem(
-        "accessToken",
-        newToken
-      );
-
-      api.defaults.headers.common.Authorization =
-        `Bearer ${newToken}`;
-
-      const me = await api.get("/users/me");
-
-      localStorage.setItem(
-        "user",
-        JSON.stringify(me.data)
-      );
-
-      setUser(me.data);
-    } catch {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("user");
-    } finally {
-      setLoading(false);
-    }
-  };
+    setUser(null);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const login = (
     token: string,
