@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 
-import Sidebar from "@/components/layout/Sidebar";
 import Navbar from "@/components/layout/Navbar";
+import Sidebar from "@/components/layout/Sidebar";
 
 const DashboardLayout = () => {
   return (
@@ -13,7 +13,7 @@ const DashboardLayout = () => {
 
         <Navbar />
 
-        <main className="flex-1 p-6">
+        <main className="flex-1 px-8 pb-8">
 
           <Outlet />
 

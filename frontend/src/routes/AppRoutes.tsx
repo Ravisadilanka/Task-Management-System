@@ -3,9 +3,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AuthLayout from "@/components/layout/AuthLayout";
 import Login from "@/pages/Login";
 import ProtectedRoute from "./ProtectedRoute";
-import DashboardLayout from "@/components/layout/DashboardLayout";
 import Dashboard from "@/pages/Dashboard";
 import Register from "@/pages/Register";
+import DashboardLayout from "@/layouts/DashboardLayout";
 
 const AppRoutes = () => {
   return (
@@ -25,11 +25,7 @@ const AppRoutes = () => {
           }
         >
           <Route index element={<Dashboard />} />
-
-          {/* <Route
-          path="tasks"
-          element={<Tasks />}
-        /> */}
+          {/* <Route path="tasks" element={<Tasks />} /> */}
         </Route>
       </Routes>
     </BrowserRouter>
