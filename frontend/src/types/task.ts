@@ -5,6 +5,7 @@ export interface Task {
   status: "Open" | "In Progress" | "Testing" | "Done";
   priority: "Low" | "Medium" | "High";
   dueDate: string;
+  createdAt: string;
 
   createdBy: {
     _id: string;

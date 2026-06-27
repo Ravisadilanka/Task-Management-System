@@ -6,11 +6,10 @@ import { Toaster } from "sonner";
 import { AuthProvider } from "./contexts/AuthContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
-  <AuthProvider>
-    <StrictMode>
+  <StrictMode>
+    <AuthProvider>
       <App />
       <Toaster richColors position="top-right" />
-    </StrictMode>
-    ,
-  </AuthProvider>,
+    </AuthProvider>
+  </StrictMode>
 );

@@ -160,11 +160,25 @@ const CreateTaskDialog = ({ open, onOpenChange, onCreated }: Props) => {
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
+              className="cursor-pointer"
             >
               Cancel
             </Button>
 
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="
+    bg-blue-600
+    hover:bg-blue-700
+    text-white
+    font-semibold
+    rounded-lg
+    px-6
+    py-2
+    cursor-pointer
+  "
+            >
               {isSubmitting ? "Creating..." : "Create Task"}
             </Button>
           </div>

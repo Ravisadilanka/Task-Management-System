@@ -1,22 +1,19 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import EditTaskDialog from "@/components/tasks/EditTaskDialog";
 
-import { ArrowLeft, Calendar, Pencil, Trash2, User } from "lucide-react";
+import { ArrowLeft, Calendar, Pencil, User } from "lucide-react";
 
 import api from "@/services/api";
 import { useAuth } from "@/hooks/useAuth";
 
 import { Button } from "@/components/ui/button";
 import TaskBadge from "@/components/common/TaskBadge";
-import DeleteTaskDialog from "@/components/tasks/DeleteTaskDialog";
 
 import type { Task } from "@/types/task";
 
 const TaskDetails = () => {
   const { id } = useParams();
-
-  const navigate = useNavigate();
 
   const { user } = useAuth();
 
@@ -26,7 +23,6 @@ const TaskDetails = () => {
 
   const [openEdit, setOpenEdit] = useState(false);
 
-  const [openDelete, setOpenDelete] = useState(false);
 
   const getTask = async () => {
     try {

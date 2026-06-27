@@ -132,20 +132,29 @@ export const login = async (req, res) => {
 
 //Logout User
 export const logout = async (req, res) => {
-    const refreshToken = req.cookies.refreshToken
+  try {
+    const refreshToken = req.cookies.refreshToken;
 
     if (refreshToken) {
-        const user = await User.findOne({
-            refreshToken : refreshToken
-        })
-    }
+      const user = await User.findOne({
+        refreshToken,
+      });
 
-    if (user) {
+      if (user) {
         user.refreshToken = null;
         await user.save();
+      }
     }
 
-    res.clearCookie("refreshToken")
+    res.clearCookie("refreshToken");
 
-    res.json({ message: "Logged out successfully" })
-}
+    res.json({
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};

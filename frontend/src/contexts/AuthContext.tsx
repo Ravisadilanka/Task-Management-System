@@ -73,17 +73,19 @@ export const AuthProvider = ({
   };
 
   const logout = async () => {
-    try {
-      await api.post("/auth/logout");
-    } catch {}
-
+  try {
+    await api.post("/auth/logout");
+  } catch (error) {
+    console.error(error);
+  } finally {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("user");
 
     delete api.defaults.headers.common.Authorization;
 
     setUser(null);
-  };
+  }
+};
 
   return (
     <AuthContext.Provider
