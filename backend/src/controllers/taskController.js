@@ -179,3 +179,45 @@ export const deleteTask = async (req, res) => {
         res.status(500).json({ message: 'Error deleting task', error: error.message })
     }
 }
+
+export const getTaskById = async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.id)
+      .populate("createdBy", "name email")
+      .populate("assignedTo", "name email");
+
+    if (!task) {
+      return res.status(404).json({
+        message: "Task not found",
+      });
+    }
+
+    const isAdmin =
+      req.user.role === "admin";
+
+    const isCreator =
+      task.createdBy._id.toString() ===
+      req.user._id.toString();
+
+    const isAssigned =
+      task.assignedTo &&
+      task.assignedTo._id.toString() ===
+        req.user._id.toString();
+
+    if (
+      !isAdmin &&
+      !isCreator &&
+      !isAssigned
+    ) {
+      return res.status(403).json({
+        message: "Access denied",
+      });
+    }
+
+    res.status(200).json(task);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
