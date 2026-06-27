@@ -1,13 +1,24 @@
-import type { Task } from "@/types/task";
-import TaskBadge from "../common/TaskBadge";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Eye, Pencil, Trash2 } from "lucide-react";
+
+import type { Task } from "@/types/task";
+
+import TaskBadge from "../common/TaskBadge";
+import { Button } from "../ui/button";
+import EditTaskDialog from "@/components/tasks/EditTaskDialog";
 
 interface Props {
   tasks: Task[];
   loading: boolean;
+  getTasks: () => void;
 }
 
-const TaskTable = ({ tasks, loading }: Props) => {
+const TaskTable = ({ tasks, loading, getTasks }: Props) => {
+  const [openEdit, setOpenEdit] = useState(false);
+
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+
   if (loading) {
     return (
       <div className="rounded-2xl bg-white p-10 text-center shadow-sm">
@@ -29,63 +40,100 @@ const TaskTable = ({ tasks, loading }: Props) => {
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl bg-white shadow-sm">
-      <table className="w-full">
-        <thead className="bg-slate-50">
-          <tr>
-            <th className="px-6 py-4 text-left">Title</th>
+    <>
+      <div className="overflow-hidden rounded-2xl bg-white shadow-sm">
+        <table className="w-full">
+          <thead className="bg-slate-50">
+            <tr>
+              <th className="px-6 py-4 text-left">Title</th>
 
-            <th className="px-6 py-4 text-left">Status</th>
+              <th className="px-6 py-4 text-left">Status</th>
 
-            <th className="px-6 py-4 text-left">Priority</th>
+              <th className="px-6 py-4 text-left">Priority</th>
 
-            <th className="px-6 py-4 text-left">Assigned To</th>
+              <th className="px-6 py-4 text-left">Assigned To</th>
 
-            <th className="px-6 py-4 text-left">Due Date</th>
+              <th className="px-6 py-4 text-left">Due Date</th>
 
-            <th className="px-6 py-4 text-center">Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {tasks.map((task) => (
-            <tr key={task._id} className="border-t hover:bg-slate-50">
-              <td className="px-6 py-4">{task.title}</td>
-
-              <td className="px-6 py-4">
-                <TaskBadge type="status" value={task.status} />
-              </td>
-
-              <td className="px-6 py-4">
-                <TaskBadge type="priority" value={task.priority} />
-              </td>
-
-              <td className="px-6 py-4">{task.assignedTo?.name}</td>
-
-              <td className="px-6 py-4">
-                {new Date(task.dueDate).toLocaleDateString()}
-              </td>
-
-              <td className="px-6 py-4">
-                <div className="flex justify-center gap-2">
-                  <button className="rounded-lg p-2 hover:bg-slate-100">
-                    <Eye size={18} />
-                  </button>
-
-                  <button className="rounded-lg p-2 hover:bg-blue-100 text-blue-600">
-                    <Pencil size={18} />
-                  </button>
-
-                  <button className="rounded-lg p-2 hover:bg-red-100 text-red-600">
-                    <Trash2 size={18} />
-                  </button>
-                </div>
-              </td>
+              <th className="px-6 py-4 text-center">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+
+          <tbody>
+            {tasks.map((task) => (
+              <tr key={task._id} className="border-t hover:bg-slate-50">
+                <td className="px-6 py-4">
+                  <Link
+                    to={`/tasks/${task._id}`}
+                    className="font-semibold text-slate-900 hover:text-blue-600 hover:underline"
+                  >
+                    {task.title}
+                  </Link>
+                </td>
+
+                <td className="px-6 py-4">
+                  <TaskBadge type="status" value={task.status} />
+                </td>
+
+                <td className="px-6 py-4">
+                  <TaskBadge type="priority" value={task.priority} />
+                </td>
+
+                <td className="px-6 py-4">{task.assignedTo?.name ?? "-"}</td>
+
+                <td className="px-6 py-4">
+                  {task.dueDate
+                    ? new Date(task.dueDate).toLocaleDateString()
+                    : "-"}
+                </td>
+
+                <td className="px-6 py-4">
+                  <div className="flex items-center justify-center gap-2 rounded-xl bg-slate-50 p-2">
+                    <Button
+                      asChild
+                      variant="ghost"
+                      size="icon"
+                      className="rounded-lg hover:bg-blue-500 hover:text-white transition-colors"
+                    >
+                      <Link to={`/tasks/${task._id}`}>
+                        <Eye className="h-4 w-4" />
+                      </Link>
+                    </Button>
+
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => {
+                        setSelectedTask(task);
+                        setOpenEdit(true);
+                      }}
+                      className="rounded-lg hover:bg-amber-500 hover:text-white transition-colors"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="rounded-lg hover:bg-red-500 hover:text-white transition-colors"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <EditTaskDialog
+        open={openEdit}
+        onOpenChange={setOpenEdit}
+        task={selectedTask!}
+        onUpdated={getTasks}
+      />
+    </>
   );
 };
 

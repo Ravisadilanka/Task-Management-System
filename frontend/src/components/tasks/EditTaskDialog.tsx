@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
@@ -13,9 +13,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 
 import {
   Select,
@@ -26,15 +26,18 @@ import {
 } from "@/components/ui/select";
 
 import { createTaskSchema, type CreateTaskForm } from "@/validations/task";
+
 import type { User } from "@/types/auth";
+import type { Task } from "@/types/task";
 
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onCreated: () => void;
+  task: Task;
+  onUpdated: () => Promise<void> | void;
 }
 
-const CreateTaskDialog = ({ open, onOpenChange, onCreated }: Props) => {
+const EditTaskDialog = ({ open, onOpenChange, task, onUpdated }: Props) => {
   const { user } = useAuth();
 
   const [users, setUsers] = useState<User[]>([]);
@@ -47,11 +50,20 @@ const CreateTaskDialog = ({ open, onOpenChange, onCreated }: Props) => {
     formState: { errors, isSubmitting },
   } = useForm<CreateTaskForm>({
     resolver: zodResolver(createTaskSchema),
-
-    defaultValues: {
-      priority: "Medium",
-    },
   });
+
+  useEffect(() => {
+    if (!task) return;
+
+    reset({
+      title: task.title,
+      description: task.description,
+      priority: task.priority,
+      status: task.status,
+      assignedTo: task.assignedTo?._id,
+      dueDate: task.dueDate ? task.dueDate.split("T")[0] : "",
+    });
+  }, [task, reset]);
 
   useEffect(() => {
     if (open && user?.role === "admin") {
@@ -70,26 +82,28 @@ const CreateTaskDialog = ({ open, onOpenChange, onCreated }: Props) => {
   };
 
   const onSubmit = async (data: CreateTaskForm) => {
-    try {
-      await api.post("/tasks", data);
+  try {
+    await api.put(`/tasks/${task._id}`, data);
 
-      toast.success("Task created successfully");
+    await onUpdated();
 
-      reset();
+    onOpenChange(false);
 
-      onCreated();
+    toast.success("Task updated successfully");
+  } catch (error: any) {
+    console.error("Update failed:", error);
 
-      onOpenChange(false);
-    } catch (error: any) {
-      toast.error(error.response?.data?.message ?? "Failed to create task");
-    }
-  };
-
+    toast.error(
+      error.response?.data?.message ??
+      "Failed to update task"
+    );
+  }
+};
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl bg-white">
+      <DialogContent className="bg-white sm:max-w-xl overflow-visible">
         <DialogHeader>
-          <DialogTitle>Create Task</DialogTitle>
+          <DialogTitle>Edit Task</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
@@ -131,6 +145,27 @@ const CreateTaskDialog = ({ open, onOpenChange, onCreated }: Props) => {
             )}
           />
 
+          <Controller
+            control={control}
+            name="status"
+            render={({ field }) => (
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+
+                <SelectContent side="bottom" className="bg-white">
+                  <SelectItem value="Open">Open</SelectItem>
+
+                  <SelectItem value="In Progress">In Progress</SelectItem>
+
+                  <SelectItem value="Testing">Testing</SelectItem>
+
+                  <SelectItem value="Done">Done</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
           {user?.role === "admin" && (
             <Controller
               control={control}
@@ -141,7 +176,10 @@ const CreateTaskDialog = ({ open, onOpenChange, onCreated }: Props) => {
                     <SelectValue placeholder="Assign user" />
                   </SelectTrigger>
 
-                  <SelectContent side="bottom" className="bg-white">
+                  <SelectContent
+                    side="bottom"
+                    className="bg-gray-900 text-white border-gray-700"
+                  >
                     {users.map((user) => (
                       <SelectItem key={user._id} value={user._id}>
                         {user.name}
@@ -153,9 +191,11 @@ const CreateTaskDialog = ({ open, onOpenChange, onCreated }: Props) => {
             />
           )}
 
-          <Input type="date" {...register("dueDate")} />
+          <div>
+            <Input type="date" {...register("dueDate")} />
+          </div>
 
-          <div className="flex justify-end gap-3">
+          <div className="flex justify-end gap-3 pt-2">
             <Button
               type="button"
               variant="outline"
@@ -165,7 +205,7 @@ const CreateTaskDialog = ({ open, onOpenChange, onCreated }: Props) => {
             </Button>
 
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Creating..." : "Create Task"}
+              {isSubmitting ? "Saving..." : "Save Changes"}
             </Button>
           </div>
         </form>
@@ -174,4 +214,4 @@ const CreateTaskDialog = ({ open, onOpenChange, onCreated }: Props) => {
   );
 };
 
-export default CreateTaskDialog;
+export default EditTaskDialog;

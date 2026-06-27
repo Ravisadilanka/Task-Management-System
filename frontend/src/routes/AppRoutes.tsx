@@ -7,6 +7,7 @@ import Dashboard from "@/pages/Dashboard";
 import Register from "@/pages/Register";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import Tasks from "@/pages/Tasks";
+import TaskDetails from "@/pages/TaskDetails";
 
 const AppRoutes = () => {
   return (
@@ -27,6 +28,7 @@ const AppRoutes = () => {
         >
           <Route index element={<Dashboard />} />
           <Route path="tasks" element={<Tasks />} />
+          <Route path="tasks/:id" element={<TaskDetails />} />
         </Route>
       </Routes>
     </BrowserRouter>

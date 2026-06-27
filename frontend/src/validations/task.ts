@@ -1,9 +1,7 @@
 import { z } from "zod";
 
 export const createTaskSchema = z.object({
-  title: z
-    .string()
-    .min(3, "Title must be at least 3 characters"),
+  title: z.string().min(3),
 
   description: z.string(),
 
@@ -12,6 +10,15 @@ export const createTaskSchema = z.object({
     "Medium",
     "High",
   ]),
+
+  status: z
+    .enum([
+      "Open",
+      "In Progress",
+      "Testing",
+      "Done",
+    ])
+    .optional(),
 
   dueDate: z.string().optional(),
 

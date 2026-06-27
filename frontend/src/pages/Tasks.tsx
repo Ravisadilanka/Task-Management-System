@@ -41,7 +41,11 @@ const Tasks = () => {
 
       <TaskToolbar onCreate={() => setOpenCreate(true)} />
 
-      <TaskTable tasks={tasks} loading={loading} />
+      <TaskTable
+  tasks={tasks}
+  loading={loading}
+  getTasks={getTasks}
+/>
 
       <CreateTaskDialog
         open={openCreate}
