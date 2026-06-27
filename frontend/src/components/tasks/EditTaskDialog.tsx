@@ -82,23 +82,20 @@ const EditTaskDialog = ({ open, onOpenChange, task, onUpdated }: Props) => {
   };
 
   const onSubmit = async (data: CreateTaskForm) => {
-  try {
-    await api.put(`/tasks/${task._id}`, data);
+    try {
+      await api.put(`/tasks/${task._id}`, data);
 
-    await onUpdated();
+      await onUpdated();
 
-    onOpenChange(false);
+      onOpenChange(false);
 
-    toast.success("Task updated successfully");
-  } catch (error: any) {
-    console.error("Update failed:", error);
+      toast.success("Task updated successfully");
+    } catch (error: any) {
+      console.error("Update failed:", error);
 
-    toast.error(
-      error.response?.data?.message ??
-      "Failed to update task"
-    );
-  }
-};
+      toast.error(error.response?.data?.message ?? "Failed to update task");
+    }
+  };
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-white sm:max-w-xl overflow-visible">
@@ -200,11 +197,25 @@ const EditTaskDialog = ({ open, onOpenChange, task, onUpdated }: Props) => {
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
+              className="cursor-pointer"
             >
               Cancel
             </Button>
 
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="
+    bg-blue-600
+    hover:bg-blue-700
+    text-white
+    font-semibold
+    rounded-lg
+    px-6
+    py-2
+    cursor-pointer
+  "
+            >
               {isSubmitting ? "Saving..." : "Save Changes"}
             </Button>
           </div>

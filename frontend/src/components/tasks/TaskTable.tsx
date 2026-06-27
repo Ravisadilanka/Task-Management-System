@@ -7,6 +7,7 @@ import type { Task } from "@/types/task";
 import TaskBadge from "../common/TaskBadge";
 import { Button } from "../ui/button";
 import EditTaskDialog from "@/components/tasks/EditTaskDialog";
+import DeleteTaskDialog from "@/components/tasks/DeleteTaskDialog";
 
 interface Props {
   tasks: Task[];
@@ -18,6 +19,8 @@ const TaskTable = ({ tasks, loading, getTasks }: Props) => {
   const [openEdit, setOpenEdit] = useState(false);
 
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+
+  const [openDelete, setOpenDelete] = useState(false);
 
   if (loading) {
     return (
@@ -115,6 +118,10 @@ const TaskTable = ({ tasks, loading, getTasks }: Props) => {
                     <Button
                       variant="ghost"
                       size="icon"
+                      onClick={() => {
+                        setSelectedTask(task);
+                        setOpenDelete(true);
+                      }}
                       className="rounded-lg hover:bg-red-500 hover:text-white transition-colors"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -132,6 +139,13 @@ const TaskTable = ({ tasks, loading, getTasks }: Props) => {
         onOpenChange={setOpenEdit}
         task={selectedTask!}
         onUpdated={getTasks}
+      />
+
+      <DeleteTaskDialog
+        open={openDelete}
+        onOpenChange={setOpenDelete}
+        taskId={selectedTask?._id ?? ""}
+        onDeleted={getTasks}
       />
     </>
   );

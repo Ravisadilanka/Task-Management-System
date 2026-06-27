@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 import { Button } from "@/components/ui/button";
 import TaskBadge from "@/components/common/TaskBadge";
+import DeleteTaskDialog from "@/components/tasks/DeleteTaskDialog";
 
 import type { Task } from "@/types/task";
 
@@ -25,6 +26,8 @@ const TaskDetails = () => {
 
   const [openEdit, setOpenEdit] = useState(false);
 
+  const [openDelete, setOpenDelete] = useState(false);
+
   const getTask = async () => {
     try {
       const response = await api.get<Task>(`/tasks/${id}`);
@@ -40,20 +43,6 @@ const TaskDetails = () => {
   useEffect(() => {
     getTask();
   }, []);
-
-  const deleteTask = async () => {
-    if (!window.confirm("Are you sure you want to delete this task?")) {
-      return;
-    }
-
-    try {
-      await api.delete(`/tasks/${id}`);
-
-      navigate("/tasks");
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   if (loading) {
     return (
@@ -87,17 +76,14 @@ const TaskDetails = () => {
         </div>
 
         {canEdit && (
-          <div className="flex gap-3">
-            <Button onClick={() => setOpenEdit(true)}>
+            <Button
+              onClick={() => setOpenEdit(true)}
+              variant="ghost"
+              size="icon"
+              className="rounded-lg hover:bg-amber-500 hover:text-white transition-colors p-2"
+            >
               <Pencil size={18} />
-              Edit
             </Button>
-
-            <Button variant="destructive" onClick={deleteTask}>
-              <Trash2 size={18} />
-              Delete
-            </Button>
-          </div>
         )}
       </div>
 
