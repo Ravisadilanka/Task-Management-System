@@ -59,7 +59,7 @@ export const refresh = async (req, res) => {
                 message: "User not found",
             });
         }
-        
+
         if (user.refreshToken !== refreshToken) {
             return res.status(403).json({
                 message: "Refresh token does not match",
@@ -110,10 +110,13 @@ export const login = async (req, res) => {
 
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            secure: false,
-            sameSite: "strict",
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        })
+            secure: process.env.NODE_ENV === "production",
+            sameSite:
+                process.env.NODE_ENV === "production"
+                    ? "none"
+                    : "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
 
         res.json({
             accessToken,
@@ -123,38 +126,45 @@ export const login = async (req, res) => {
                 role: user.role,
                 email: user.email
             }
-    })
+        })
     } catch (error) {
         res.status(500).json({ message: "Server error", error: error.message })
     }
 }
 
 
-//Logout User
+// Logout User
 export const logout = async (req, res) => {
-  try {
-    const refreshToken = req.cookies.refreshToken;
+    try {
+        const refreshToken = req.cookies.refreshToken;
 
-    if (refreshToken) {
-      const user = await User.findOne({
-        refreshToken,
-      });
+        if (refreshToken) {
+            const user = await User.findOne({
+                refreshToken,
+            });
 
-      if (user) {
-        user.refreshToken = null;
-        await user.save();
-      }
+            if (user) {
+                user.refreshToken = null;
+                await user.save();
+            }
+        }
+
+        res.clearCookie("refreshToken", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite:
+                process.env.NODE_ENV === "production"
+                    ? "none"
+                    : "lax",
+        });
+
+        res.json({
+            message: "Logged out successfully",
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Server error",
+            error: error.message,
+        });
     }
-
-    res.clearCookie("refreshToken");
-
-    res.json({
-      message: "Logged out successfully",
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: "Server error",
-      error: error.message,
-    });
-  }
 };
