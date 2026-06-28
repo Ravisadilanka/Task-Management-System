@@ -118,9 +118,9 @@ PORT=5000
 
 MONGO_URI=your_mongodb_connection_string
 
-JWT_SECRET=your_jwt_secret
+ACCESS_TOKEN_SECRET=your_jwt_secret
 
-JWT_REFRESH_SECRET=your_refresh_secret
+REFRESH_TOKEN_SECRET=your_refresh_secret
 
 CLIENT_URL=http://localhost:5173
 ```
@@ -150,8 +150,8 @@ npm run seed
 | Field | Value |
 |-------|-------|
 | Email | `admin@example.com` |
-| Name | `System Name` |
-| Password | `Admin@123` |
+| Name | `System Admin` |
+| Password | `Admin123` |
 | Role | `admin` |
 
 > **Note:** If you changed the credentials inside `seed.js`, use those values instead.
