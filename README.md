@@ -133,6 +133,31 @@ npm run dev
 
 ---
 
+## Database Seeding
+
+To create the default administrator account, run the seed script after configuring your database connection.
+
+```bash
+cd backend
+
+npm run seed
+```
+
+> Ensure MongoDB is running and your `.env` file is configured before executing the seed command.
+
+### Default Admin Credentials
+
+| Field | Value |
+|-------|-------|
+| Email | `admin@example.com` |
+| Name | `System Name` |
+| Password | `Admin@123` |
+| Role | `admin` |
+
+> **Note:** If you changed the credentials inside `seed.js`, use those values instead.
+
+---
+
 # Frontend Setup
 
 Open another terminal.
