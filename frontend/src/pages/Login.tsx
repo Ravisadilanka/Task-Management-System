@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -90,11 +90,21 @@ const Login = () => {
 
           <Button
             type="submit"
-            className="h-11 w-full rounded-xl bg-blue-600 hover:bg-blue-700 text-white"
+            className="h-11 w-full rounded-xl bg-blue-600 text-white hover:bg-blue-700"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Signing In..." : "Sign In"}
           </Button>
+
+          <div className="pt-2 text-center text-sm text-slate-600">
+            Don't have an account?{" "}
+            <Link
+              to="/register"
+              className="font-medium text-blue-600 hover:underline"
+            >
+              Create one
+            </Link>
+          </div>
         </form>
       </CardContent>
     </Card>
