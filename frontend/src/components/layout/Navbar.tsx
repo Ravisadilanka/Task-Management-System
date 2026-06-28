@@ -1,39 +1,61 @@
+import { Menu } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 
-const Navbar = () => {
+interface Props {
+  onMenuClick: () => void;
+}
+
+const Navbar = ({ onMenuClick }: Props) => {
   const { user } = useAuth();
 
+  const hour = new Date().getHours();
+
   const greeting =
-    new Date().getHours() < 12
+    hour < 12
       ? "Good Morning"
-      : new Date().getHours() < 18
+      : hour < 18
       ? "Good Afternoon"
       : "Good Evening";
 
   return (
-    <header className="flex items-center justify-between bg-slate-50 px-8 py-8">
+    <header className="sticky top-0 z-30 flex items-center justify-between border-b bg-white px-4 py-4 shadow-sm md:px-6 lg:px-8">
+      {/* Left */}
 
-      <div>
+      <div className="flex items-center gap-4">
+        {/* Mobile Menu */}
 
-        <h2 className="text-3xl font-bold text-slate-900">
-          {greeting} 👋
-        </h2>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onMenuClick}
+          className="lg:hidden"
+        >
+          <Menu className="h-6 w-6" />
+        </Button>
 
-        <p className="mt-2 text-slate-500">
-          Welcome back,{" "}
-          <span className="font-semibold">
-            {user?.name}
-          </span>
-        </p>
+        <div>
+          <h2 className="text-xl font-bold text-slate-900 md:text-2xl">
+            {greeting} 👋
+          </h2>
 
+          <p className="hidden text-sm text-slate-500 sm:block">
+            Welcome back,
+            <span className="ml-1 font-semibold">
+              {user?.name}
+            </span>
+          </p>
+        </div>
       </div>
 
-      <div className="rounded-full bg-blue-100 px-5 py-2 text-sm font-semibold capitalize text-blue-700">
+      {/* Right */}
 
-        {user?.role}
-
+      <div className="flex items-center gap-3">
+        <div className="rounded-full bg-blue-100 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-blue-700 md:text-sm">
+          {user?.role}
+        </div>
       </div>
-
     </header>
   );
 };

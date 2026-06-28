@@ -57,7 +57,7 @@ const Tasks = () => {
   }, [search, status, priority, sort]);
 
   return (
-    <div className="space-y-6">
+    <div className="h-full overflow-hidden flex flex-col space-y-6">
       <div>
         <h1 className="text-3xl font-bold">
           Tasks

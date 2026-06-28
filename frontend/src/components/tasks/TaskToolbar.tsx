@@ -37,90 +37,85 @@ const TaskToolbar = ({
   onSortChange,
 }: Props) => {
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-sm">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex flex-1 flex-col gap-4 lg:flex-row">
-          {/* Search */}
+  <div className="rounded-2xl bg-white p-4 shadow-sm md:p-5">
+    <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+      {/* Filters */}
 
-          <div className="relative w-full lg:max-w-sm">
-            <Search
-              size={18}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-            />
+      <div className="grid flex-1 grid-cols-1 gap-3 sm:grid-cols-2 xl:flex xl:items-center xl:gap-4">
+        {/* Search */}
 
-            <Input
-              value={search}
-              onChange={(e) => onSearchChange(e.target.value)}
-              placeholder="Search tasks..."
-              className="pl-10"
-            />
-          </div>
+        <div className="relative sm:col-span-2 xl:w-80">
+          <Search
+            size={18}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+          />
 
-          {/* Status */}
-
-          <Select value={status} onValueChange={onStatusChange}>
-            <SelectTrigger className="w-full lg:w-44">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-
-            <SelectContent side="bottom" className="bg-white">
-              <SelectItem value="all">All Status</SelectItem>
-
-              <SelectItem value="Open">Open</SelectItem>
-
-              <SelectItem value="In Progress">In Progress</SelectItem>
-
-              <SelectItem value="Testing">Testing</SelectItem>
-
-              <SelectItem value="Done">Done</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {/* Priority */}
-
-          <Select value={priority} onValueChange={onPriorityChange}>
-            <SelectTrigger className="w-full lg:w-44">
-              <SelectValue placeholder="Priority" />
-            </SelectTrigger>
-
-            <SelectContent side="bottom" className="bg-white">
-              <SelectItem value="all">All Priority</SelectItem>
-
-              <SelectItem value="High">High</SelectItem>
-
-              <SelectItem value="Medium">Medium</SelectItem>
-
-              <SelectItem value="Low">Low</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {/* Sort */}
-
-          <Select value={sort} onValueChange={onSortChange}>
-            <SelectTrigger className="w-full lg:w-44">
-              <SelectValue placeholder="Sort" />
-            </SelectTrigger>
-
-            <SelectContent side="bottom" className="bg-white">
-              <SelectItem value="newest">Newest</SelectItem>
-
-              <SelectItem value="oldest">Oldest</SelectItem>
-
-              <SelectItem value="dueDate">Due Date</SelectItem>
-            </SelectContent>
-          </Select>
+          <Input
+            value={search}
+            onChange={(e) => onSearchChange(e.target.value)}
+            placeholder="Search tasks..."
+            className="pl-10"
+          />
         </div>
 
-        <Button
-          onClick={onCreate}
-          className="rounded-xl bg-blue-600 hover:bg-blue-700"
-        >
-          <Plus size={18} />
-          New Task
-        </Button>
+        {/* Status */}
+
+        <Select value={status} onValueChange={onStatusChange}>
+          <SelectTrigger className="w-full xl:w-44">
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+
+          <SelectContent side="bottom" className="bg-white">
+            <SelectItem value="all">All Status</SelectItem>
+            <SelectItem value="Open">Open</SelectItem>
+            <SelectItem value="In Progress">In Progress</SelectItem>
+            <SelectItem value="Testing">Testing</SelectItem>
+            <SelectItem value="Done">Done</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* Priority */}
+
+        <Select value={priority} onValueChange={onPriorityChange}>
+          <SelectTrigger className="w-full xl:w-44">
+            <SelectValue placeholder="Priority" />
+          </SelectTrigger>
+
+          <SelectContent side="bottom" className="bg-white">
+            <SelectItem value="all">All Priority</SelectItem>
+            <SelectItem value="High">High</SelectItem>
+            <SelectItem value="Medium">Medium</SelectItem>
+            <SelectItem value="Low">Low</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* Sort */}
+
+        <Select value={sort} onValueChange={onSortChange}>
+          <SelectTrigger className="w-full xl:w-44">
+            <SelectValue placeholder="Sort By" />
+          </SelectTrigger>
+
+          <SelectContent side="bottom" className="bg-white">
+            <SelectItem value="newest">Newest</SelectItem>
+            <SelectItem value="oldest">Oldest</SelectItem>
+            <SelectItem value="dueDate">Due Date</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
+
+      {/* Create Button */}
+
+      <Button
+        onClick={onCreate}
+        className="w-full rounded-xl bg-blue-600 hover:bg-blue-700 sm:w-auto xl:shrink-0"
+      >
+        <Plus className="mr-2 h-4 w-4" />
+        New Task
+      </Button>
     </div>
-  );
+  </div>
+);
 };
 
 export default TaskToolbar;

@@ -1,75 +1,225 @@
-# React + TypeScript + Vite
+# Task Management System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack Task Management System built with the MERN stack that allows users to create, manage, assign, update, and track tasks with role-based access control.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+### Authentication
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- JWT Authentication
+- Access Token & Refresh Token
+- Secure HTTP-only Cookies
+- User Login & Registration
+- Logout
 
-## Expanding the ESLint configuration
+### User Roles
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+#### Admin
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- View all tasks
+- Create tasks
+- Assign tasks to any user
+- Update any task
+- Delete any task
+- View all users
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+#### Regular User
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- View tasks they created
+- View tasks assigned to them
+- Create tasks
+- Update tasks they created
+- Delete tasks they created
 
+---
+
+## Task Management
+
+- Create Task
+- View Tasks
+- Task Details
+- Update Task
+- Delete Task
+- Search Tasks
+- Filter by Status
+- Filter by Priority
+- Sort Tasks
+
+---
+
+## Dashboard
+
+- Total Tasks
+- Open Tasks
+- In Progress Tasks
+- Testing Tasks
+- Completed Tasks
+- Recent Tasks Overview
+
+---
+
+## Tech Stack
+
+### Frontend
+
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- React Router DOM
+- React Hook Form
+- Zod
+- Axios
+- Shadcn UI
+- Lucide React
+- Sonner
+
+### Backend
+
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+- JWT
+- bcrypt
+- Cookie Parser
+
+
+---
+
+# Installation
+
+## 1. Clone Repository
+
+```bash
+git clone https://github.com/Ravisadilanka/Task-Management-System.git
+
+cd Task-Management-System
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+# Backend Setup
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd backend
+
+npm install
+```
+
+Create a `.env` file inside the **backend** folder.
+
+Example:
+
+```env
+PORT=5000
+
+MONGO_URI=your_mongodb_connection_string
+
+JWT_SECRET=your_jwt_secret
+
+JWT_REFRESH_SECRET=your_refresh_secret
+
+CLIENT_URL=http://localhost:5173
+```
+
+Run backend
+
+```bash
+npm run dev
+```
+
+---
+
+# Frontend Setup
+
+Open another terminal.
+
+```bash
+cd frontend
+
+npm install
+```
+
+Create a `.env` file inside the **frontend** folder.
+
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+Run frontend
+
+```bash
+npm run dev
+```
+
+---
+
+## API Endpoints
+
+### Authentication
 
 ```
+POST   /api/auth/register
+POST   /api/auth/login
+POST   /api/auth/refresh
+POST   /api/auth/logout
+GET    /api/users/me
+```
+
+### Users
+
+```
+GET    /api/users
+GET    /api/users/me
+```
+
+### Tasks
+
+```
+GET    /api/tasks
+GET    /api/tasks/:id
+POST   /api/tasks
+PUT    /api/tasks/:id
+DELETE /api/tasks/:id
+```
+
+---
+
+## Responsive Design
+
+The application is fully responsive and optimized for:
+
+- Desktop
+- Tablet
+- Mobile
+
+---
+
+## Security
+
+- JWT Authentication
+- HTTP-only Refresh Token Cookies
+- Password Hashing using bcrypt
+- Protected Routes
+- Role-based Authorization
+
+---
+
+## Assumptions
+
+- Authentication is required to access the application.
+- Only administrators can assign tasks to other users.
+- Regular users are automatically assigned to the tasks they create.
+- Only administrators and task creators can edit or delete tasks.
+- Regular users can only view tasks they created or tasks assigned to them.
+
+---
+
+## Author
+
+**Ravisa Dilanka**
+
+GitHub: https://github.com/Ravisadilanka
